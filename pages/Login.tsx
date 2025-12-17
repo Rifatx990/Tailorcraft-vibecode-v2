@@ -1,0 +1,78 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { UserRole } from '../types';
+
+const Login: React.FC = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState<UserRole>('customer');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login(email || `${role}@example.com`, role);
+    navigate(role === 'admin' ? '/dashboard/admin' : role === 'worker' ? '/dashboard/worker' : '/dashboard/customer');
+  };
+
+  return (
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Select a role to view different dashboards (Demo Mode)
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email-address" className="sr-only">Email address</label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-gold-500 focus:border-gold-500 focus:z-10 sm:text-sm"
+                placeholder="Email address (optional for demo)"
+              />
+            </div>
+            <div>
+              <label htmlFor="role" className="sr-only">Role</label>
+              <select
+                id="role"
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-gold-500 focus:border-gold-500 focus:z-10 sm:text-sm"
+              >
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+                <option value="worker">Worker / Tailor</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gold-600 hover:bg-gold-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 transition"
+            >
+              Sign In
+            </button>
+          </div>
+          
+          <div className="bg-blue-50 p-4 rounded text-xs text-blue-800">
+             <strong>Demo Hint:</strong> Select "Admin" to see analytics, "Worker" to see tasks, or "Customer" to see orders.
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
